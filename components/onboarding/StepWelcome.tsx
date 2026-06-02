@@ -44,7 +44,7 @@ export default function StepWelcome({
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
             />
             <Input
-              placeholder="e.g. Arjun Sharma"
+              placeholder="Your Name"
               value={name}
               onChange={(e) => onNameChange(e.target.value)}
               className="bg-[#f0f9f0] border-gray-200 pl-9"

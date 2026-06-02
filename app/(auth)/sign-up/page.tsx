@@ -40,7 +40,7 @@ export default function SignUpPage() {
             <Input
               id="name"
               type="text"
-              placeholder="e.g. Arjun Sharma"
+              placeholder="Your name"
               className="mt-1  bg-[#ffffff]  border-green-900"
             />
           </div>
