@@ -56,7 +56,7 @@ export default function InvestPage() {
           {/* Logo */}
           {/* Logo — click to go home */}
           <Link
-            href="/sign-in"
+            href="/onboarding"
             className="flex items-center gap-2 cursor-pointer"
           >
             <img
