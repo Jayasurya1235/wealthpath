@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User, Calendar } from "lucide-react";
-import { TrendingUp } from "lucide-react";
 
 interface StepWelcomeProps {
   name: string;
@@ -18,19 +17,31 @@ export default function StepWelcome({
 }: StepWelcomeProps) {
   return (
     <div>
-      {/* Header */}
-      <div className="mb-6">
-        <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center mb-4">
-          <TrendingUp size={24} className="text-green-700" />
+      {/* Header — logo left, app name right */}
+      <div className="flex items-center mb-3">
+        {/* Logo */}
+        <img
+          src="/assets/logo1.png"
+          alt="WealthPath"
+          className="h-20 w-auto object-contain shrink-0 -ml-6"
+        />
+
+        {/* App name + welcome text */}
+        <div>
+          <h1 className="text-2xl font-black text-green-900 leading-tight">
+            WealthPath
+          </h1>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-1">
-          Welcome to WealthPath
-        </h2>
-        <p className="text-sm text-gray-500 leading-relaxed">
-          India's smartest financial planning platform. Tell us about yourself
-          and we'll build your personalized wealth plan in 3 steps.
-        </p>
       </div>
+      
+
+      {/* Description */}
+      
+      <p className="text-sm font-bold text-green-700 mb-6">Welcome</p>
+      <p className="text-sm text-gray-500 leading-relaxed mb-6">
+        India's smartest financial planning platform. Tell us about yourself and
+        we'll build your personalized wealth plan in 3 steps.
+      </p>
 
       {/* Fields */}
       <div className="flex flex-col gap-5">

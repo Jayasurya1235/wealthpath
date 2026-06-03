@@ -42,15 +42,17 @@ export default function DashboardPage() {
     canSave > 0 ? Math.ceil(emergencyFund / canSave) : 0;
 
   return (
-    <div className="min-h-screen bg-[#f0f9f0]">
+    <div className="min-h-screen bg-[#c3e7c3]">
       {/* Top navbar */}
       <div className="bg-white border-b border-gray-100 px-6 py-4">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-green-700 flex items-center justify-center">
-              <TrendingUp size={16} className="text-white" />
-            </div>
+          <div className="flex items-center gap-1">
+            <img
+              src="assets/logo1.png"
+              alt="WealthPath"
+              className="h-15 w-auto object-contain"
+            />
             <span className="font-black text-gray-900 text-lg">WealthPath</span>
           </div>
 
@@ -78,16 +80,14 @@ export default function DashboardPage() {
         {/* Welcome header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-2xl font-black text-gray-900">
-              Hello, {name} 👋
-            </h1>
+            <h1 className="text-2xl font-black text-gray-900">Hello, {name}</h1>
             <p className="text-gray-500 text-sm mt-1">
               Here is your personal financial snapshot
             </p>
           </div>
           <Button
             onClick={() => router.push("/invest")}
-            className="bg-green-700 hover:bg-green-800 text-white flex items-center gap-2"
+            className="bg-green-700 hover:bg-green-800 text-white flex items-center gap-2 cursor-pointer"
           >
             Investment Plan
             <ArrowRight size={16} />

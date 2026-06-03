@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ import Link from "next/link";
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="min-h-screen bg-[#e8f5e9] flex items-center justify-center p-4 bg-[url('/assets/bg.png')]">
@@ -87,7 +89,10 @@ export default function SignUpPage() {
           </div>
 
           {/* Sign Up Button */}
-          <Button className="w-full bg-[#1a4731] hover:bg-[#143a28] text-white font-bold py-5 mb-4">
+          <Button
+            onClick={() => router.push("/onboarding")}
+            className="w-full bg-[#1a4731] hover:bg-[#143a28] text-white font-bold py-5 mb-4 cursor-pointer"
+          >
             Create Account
           </Button>
 

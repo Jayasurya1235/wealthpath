@@ -49,20 +49,22 @@ export default function InvestPage() {
   const gains = finalValue - invested;
 
   return (
-    <div className="min-h-screen bg-[#f0f9f0]">
+    <div className="min-h-screen bg-[#c3e7c3]">
       {/* Navbar */}
       <div className="bg-white border-b border-gray-100 px-6 py-4">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-green-700 flex items-center justify-center">
-              <TrendingUp size={16} className="text-white" />
-            </div>
+          <div className="flex items-center gap-1">
+            <img
+              src="assets/logo1.png"
+              alt="WealthPath"
+              className="h-15 w-auto object-contain"
+            />
             <span className="font-black text-gray-900 text-lg">WealthPath</span>
           </div>
           <Button
             variant="outline"
             onClick={() => router.push("/dashboard")}
-            className="flex items-center gap-2 text-sm"
+            className="flex items-center gap-2 text-sm cursor-pointer"
           >
             <ArrowLeft size={16} />
             Back to Dashboard
@@ -117,10 +119,7 @@ export default function InvestPage() {
                 Wealth Created
               </span>
             </div>
-            <p
-              className="text-2xl font-black"
-              style={{ color: selectedInv.color }}
-            >
+            <p className="text-2xl font-black text-green-700">
               {fmtL(finalValue)}
             </p>
             <p className="text-xs text-gray-400 mt-1">

@@ -137,7 +137,7 @@ export default function OnboardingPage() {
               <Button
                 variant="outline"
                 onClick={handleBack}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer"
               >
                 <ArrowLeft size={16} />
                 Back
@@ -150,7 +150,7 @@ export default function OnboardingPage() {
               <Button
                 onClick={handleFinish}
                 disabled={!isStepValid[currentStep]}
-                className="bg-[#1a4731] hover:bg-[#143a28] text-white flex items-center gap-2 ml-auto"
+                className="bg-[#1a4731] hover:bg-[#143a28] text-white flex items-center gap-2 ml-auto cursor-pointer"
               >
                 <CheckCircle size={16} />
                 Build My Plan
@@ -159,7 +159,7 @@ export default function OnboardingPage() {
               <Button
                 onClick={handleNext}
                 disabled={!isStepValid[currentStep]}
-                className="bg-[#1a4731] hover:bg-[#143a28] text-white flex items-center gap-2 ml-auto"
+                className="bg-[#1a4731] hover:bg-[#143a28] text-white flex items-center gap-2 ml-auto cursor-pointer"
               >
                 Continue
                 <ArrowRight size={16} />
