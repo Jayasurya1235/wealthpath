@@ -10,7 +10,6 @@ import AllocationCard from "@/components/invest/AllocationCard";
 import RetirementCard from "@/components/invest/RetirementCard";
 import { Button } from "@/components/ui/button";
 import {
-  TrendingUp,
   ArrowLeft,
   IndianRupee,
   Wallet,
@@ -51,32 +50,37 @@ export default function InvestPage() {
   return (
     <div className="min-h-screen bg-[#c3e7c3]">
       {/* Navbar */}
-      <div className="bg-white border-b border-gray-100 px-6 py-4">
+      <div className="bg-white border-b border-gray-100 px-4 py-3">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-1">
+          {/* Logo */}
+          <div className="flex items-center gap-2">
             <img
-              src="assets/logo1.png"
+              src="/assets/logo1.png"
               alt="WealthPath"
               className="h-15 w-auto object-contain"
             />
-            <span className="font-black text-gray-900 text-lg">WealthPath</span>
+            <span className="font-black text-gray-900 text-base sm:text-lg">
+              WealthPath
+            </span>
           </div>
+
+          {/* Back button */}
           <Button
             variant="outline"
             onClick={() => router.push("/dashboard")}
-            className="flex items-center gap-2 text-sm cursor-pointer"
+            className="flex items-center border-2 gap-2 text-sm cursor-pointer"
           >
             <ArrowLeft size={16} />
-            Back to Dashboard
+            <span className="hidden sm:inline">Back to Dashboard</span>
           </Button>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-black text-gray-900">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-xl sm:text-2xl font-black text-gray-900">
             Investment Planner
           </h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -85,41 +89,41 @@ export default function InvestPage() {
         </div>
 
         {/* Summary stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-3">
               <Wallet size={16} className="text-green-700" />
               <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
                 Investing
               </span>
             </div>
-            <p className="text-2xl font-black text-gray-900">
+            <p className="text-xl sm:text-2xl font-black text-gray-900">
               {fmt(investAmount)}
             </p>
             <p className="text-xs text-gray-400 mt-1">per month</p>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-3">
               <IndianRupee size={16} className="text-blue-400" />
               <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
                 Total Invested
               </span>
             </div>
-            <p className="text-2xl font-black text-gray-900">
+            <p className="text-xl sm:text-2xl font-black text-gray-900">
               {fmtL(invested)}
             </p>
             <p className="text-xs text-gray-400 mt-1">over {years} years</p>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-3">
               <BarChart2 size={16} className="text-purple-400" />
               <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
                 Wealth Created
               </span>
             </div>
-            <p className="text-2xl font-black text-green-700">
+            <p className="text-xl sm:text-2xl font-black text-green-700">
               {fmtL(finalValue)}
             </p>
             <p className="text-xs text-gray-400 mt-1">
@@ -127,25 +131,27 @@ export default function InvestPage() {
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-3">
               <Sparkles size={16} className="text-amber-400" />
               <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
                 Returns Earned
               </span>
             </div>
-            <p className="text-2xl font-black text-green-700">{fmtL(gains)}</p>
+            <p className="text-xl sm:text-2xl font-black text-green-700">
+              {fmtL(gains)}
+            </p>
             <p className="text-xs text-gray-400 mt-1">pure interest gains</p>
           </div>
         </div>
 
         {/* Investment option selector */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 mb-6">
           <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4">
             Choose Investment Type
           </h3>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
             {INVESTMENT_OPTIONS.map((inv) => {
               const Icon = inv.icon;
               const isSelected = selectedId === inv.id;
