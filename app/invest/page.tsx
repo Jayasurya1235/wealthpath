@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useWealthStore } from "@/lib/store";
 import { fmt, fmtL, compoundGrowth } from "@/lib/utils";
 import { INVESTMENT_OPTIONS } from "@/lib/constants";
@@ -53,16 +54,20 @@ export default function InvestPage() {
       <div className="bg-white border-b border-gray-100 px-4 py-3">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           {/* Logo */}
-          <div className="flex items-center gap-2">
+          {/* Logo — click to go home */}
+          <Link
+            href="/sign-in"
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <img
               src="/assets/logo1.png"
               alt="WealthPath"
-              className="h-15 w-auto object-contain"
+              className="h-8 w-auto object-contain"
             />
             <span className="font-black text-gray-900 text-base sm:text-lg">
               WealthPath
             </span>
-          </div>
+          </Link>
 
           {/* Back button */}
           <Button
