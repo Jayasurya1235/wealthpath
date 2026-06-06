@@ -12,6 +12,7 @@ import {
 
 interface InsightsPanelProps {
   data: UserData;
+  compact?: boolean;
 }
 
 type InsightType = "good" | "warn" | "danger" | "info";
@@ -31,7 +32,10 @@ const COLORS: Record<
   info: { bg: "bg-blue-50", text: "text-blue-600", icon: Info },
 };
 
-export default function InsightsPanel({ data }: InsightsPanelProps) {
+export default function InsightsPanel({
+  data,
+  compact = false,
+}: InsightsPanelProps) {
   const { salary, otherIncome, expenses, savingsGoal } = data;
   const totalIncome = salary + otherIncome;
   const totalExp = Object.values(expenses).reduce(
@@ -81,16 +85,23 @@ export default function InsightsPanel({ data }: InsightsPanelProps) {
     });
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6">
+    <div
+      className={
+        compact ? "" : "bg-white rounded-2xl border border-gray-100 p-6"
+      }
+    >
       {/* Title */}
-      <div className="flex items-center gap-2 mb-5">
-        <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-          <TrendingUp size={16} className="text-green-700" />
+      {/* Title — hide when compact */}
+      {!compact && (
+        <div className="flex items-center gap-2 mb-5">
+          <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+            <TrendingUp size={16} className="text-green-700" />
+          </div>
+          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide">
+            Smart Insights
+          </h3>
         </div>
-        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide">
-          Smart Insights
-        </h3>
-      </div>
+      )}
 
       {/* Insight cards */}
       <div className="flex flex-col gap-3">

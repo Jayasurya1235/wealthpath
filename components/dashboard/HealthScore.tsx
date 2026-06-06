@@ -3,63 +3,69 @@ import { Activity } from "lucide-react";
 
 interface HealthScoreProps {
   score: number;
+  compact?: boolean;
 }
 
-export default function HealthScore({ score }: HealthScoreProps) {
+export default function HealthScore({
+  score,
+  compact = false,
+}: HealthScoreProps) {
   const { label, color } = scoreLabel(score);
-  const circumference = 2 * Math.PI * 54;
+  const circumference = 2 * Math.PI * (compact ? 40 : 54);
+  const radius = compact ? 40 : 54;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6">
+    <div className="bg-white rounded-2xl border border-gray-100 p-4 h-full">
       {/* Title */}
-      <div className="flex items-center gap-2 mb-6">
-        <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-          <Activity size={16} className="text-green-700" />
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-7 h-7 rounded-lg bg-green-100 flex items-center justify-center">
+          <Activity size={14} className="text-green-700" />
         </div>
-        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide">
-          Financial Health Score
+        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide">
+          Health Score
         </h3>
       </div>
 
       {/* Circle */}
       <div className="flex flex-col items-center">
-        <div className="relative w-36 h-36">
-          <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
-            {/* Background circle */}
+        <div className={`relative ${compact ? "w-24 h-24" : "w-36 h-36"}`}>
+          <svg
+            className="w-full h-full -rotate-90"
+            viewBox={`0 0 ${(radius + 10) * 2} ${(radius + 10) * 2}`}
+          >
             <circle
-              cx="60"
-              cy="60"
-              r="54"
+              cx={radius + 10}
+              cy={radius + 10}
+              r={radius}
               fill="none"
               stroke="#f3f4f6"
-              strokeWidth="10"
+              strokeWidth="8"
             />
-            {/* Score circle */}
             <circle
-              cx="60"
-              cy="60"
-              r="54"
+              cx={radius + 10}
+              cy={radius + 10}
+              r={radius}
               fill="none"
               stroke={color}
-              strokeWidth="10"
+              strokeWidth="8"
               strokeLinecap="round"
               strokeDasharray={circumference}
               strokeDashoffset={circumference - (score / 100) * circumference}
               className="transition-all duration-700"
             />
           </svg>
-          {/* Score number in center */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-3xl font-black text-gray-900">{score}</span>
-            <span className="text-xs text-gray-400 font-medium">
-              out of 100
+            <span
+              className={`font-black text-gray-900 ${compact ? "text-xl" : "text-3xl"}`}
+            >
+              {score}
             </span>
+            <span className="text-xs text-gray-400">/ 100</span>
           </div>
         </div>
 
-        {/* Label badge */}
         <div
-          className="mt-4 px-4 py-1.5 rounded-full text-sm font-bold"
+          className="mt-3 px-3 py-1 rounded-full text-xs font-bold"
           style={{ background: `${color}20`, color }}
         >
           {label}

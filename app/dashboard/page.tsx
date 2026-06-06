@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useWealthStore } from "@/lib/store";
@@ -8,18 +8,21 @@ import { fmt, calcScore } from "@/lib/utils";
 import HealthScore from "@/components/dashboard/HealthScore";
 import InsightsPanel from "@/components/dashboard/InsightsPanel";
 import ExpenseChart from "@/components/dashboard/ExpenseChart";
+import AIAdvisorPanel from "@/components/dashboard/AIAdvisorPanel";
 import {
   ArrowRight,
   IndianRupee,
   PiggyBank,
   AlertCircle,
   Target,
+  Bot,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
   const router = useRouter();
   const { userData } = useWealthStore();
+  const [showAdvisor, setShowAdvisor] = useState(false);
 
   useEffect(() => {
     if (!userData) router.push("/onboarding");
@@ -29,6 +32,7 @@ export default function DashboardPage() {
 
   const { name, age, salary, otherIncome, expenses, savingsGoal, riskProfile } =
     userData;
+
   const totalIncome = salary + otherIncome;
   const totalExp = Object.values(expenses).reduce(
     (a, b) => a + (Number(b) || 0),
@@ -42,13 +46,11 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#c3e7c3]">
-      {/* Top navbar */}
+      {/* Navbar */}
       <div className="bg-white border-b border-gray-100 px-4 py-3">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          {/* Logo */}
-          {/* Logo — click to go home */}
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
           <Link
-            href="/onboarding"
+            href="/sign-in"
             className="flex items-center gap-2 cursor-pointer"
           >
             <img
@@ -60,8 +62,6 @@ export default function DashboardPage() {
               WealthPath
             </span>
           </Link>
-
-          {/* Right side */}
           <div className="flex items-center gap-2">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-bold text-gray-900">{name}</p>
@@ -81,28 +81,42 @@ export default function DashboardPage() {
       </div>
 
       {/* Main content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Welcome header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl font-black text-gray-900">
-              Hello, {name}
+              Hello, {name} 
             </h1>
             <p className="text-gray-500 text-sm mt-1">
               Here is your personal financial snapshot
             </p>
           </div>
-          <Button
-            onClick={() => router.push("/invest")}
-            className="bg-green-700 hover:bg-green-800 text-white flex items-center gap-2 w-full sm:w-auto cursor-pointer"
-          >
-            Investment Plan
-            <ArrowRight size={16} />
-          </Button>
+          <div className="flex gap-3 w-full sm:w-auto">
+            <Button
+              onClick={() => setShowAdvisor(!showAdvisor)}
+              className={`flex items-center gap-2 flex-1 sm:flex-none cursor-pointer border transition-all
+                ${
+                  showAdvisor
+                    ? "bg-green-700 text-white border-green-700"
+                    : "bg-white hover:bg-gray-50 text-green-700 border-green-200"
+                }`}
+            >
+              <Bot size={16} />
+              {showAdvisor ? "Close Advisor" : "AI Advisor"}
+            </Button>
+            <Button
+              onClick={() => router.push("/invest")}
+              className="bg-green-700 hover:bg-green-800 text-white flex items-center gap-2 flex-1 sm:flex-none cursor-pointer"
+            >
+              Investment Plan
+              <ArrowRight size={16} />
+            </Button>
+          </div>
         </div>
 
-        {/* Summary stat cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        {/* Stat cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
           <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-3">
               <IndianRupee size={16} className="text-green-700" />
@@ -162,51 +176,111 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Main grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Expense chart */}
-          <div className="lg:col-span-1">
-            <ExpenseChart data={userData} />
-          </div>
+        {/* ── MAIN LAYOUT ── */}
+        {showAdvisor ? (
+          /* ── WITH ADVISOR OPEN ── */
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left col — charts and cards */}
+            <div className="lg:col-span-2 flex flex-col gap-6">
+              {/* Expense chart — full width of left col */}
+              <ExpenseChart data={userData} />
 
-          {/* Health score + Emergency fund */}
-          <div className="lg:col-span-1">
-            <HealthScore score={score} />
+              {/* Bottom row — Health Score + Emergency Fund + Insights */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* Health Score — compact */}
+                <HealthScore score={score} compact={true} />
 
-            <div className="bg-white rounded-2xl border border-gray-100 p-5 mt-6">
-              <div className="flex items-center gap-2 mb-3">
-                <AlertCircle size={16} className="text-amber-500" />
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wide">
-                  Emergency Fund
-                </h3>
+                {/* Emergency Fund */}
+                <div className="bg-white rounded-2xl border border-gray-100 p-4 h-full">
+                  <div className="flex items-center gap-2 mb-3">
+                    <AlertCircle size={15} className="text-amber-500" />
+                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+                      Emergency Fund
+                    </h3>
+                  </div>
+                  <p className="text-xl font-black text-gray-900">
+                    {fmt(emergencyFund)}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">6 months needed</p>
+                  <div className="mt-3 h-1.5 bg-gray-100 rounded-full">
+                    <div
+                      className="h-full bg-amber-400 rounded-full"
+                      style={{
+                        width: `${Math.min(100, (canSave / emergencyFund) * 100 * 6)}%`,
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-400 mt-2">
+                    {monthsToEmergency > 0
+                      ? `~${monthsToEmergency} months`
+                      : "Fund ready!"}
+                  </p>
+                </div>
+
+                {/* Smart Insights — compact */}
+                <div className="bg-white rounded-2xl border border-gray-100 p-4 h-full">
+                  <div className="flex items-center gap-2 mb-3">
+                    <ArrowRight size={15} className="text-green-700" />
+                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+                      Insights
+                    </h3>
+                  </div>
+                  <InsightsPanel data={userData} compact={true} />
+                </div>
               </div>
-              <p className="text-2xl font-black text-gray-900">
-                {fmt(emergencyFund)}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                6 months of expenses needed
-              </p>
-              <div className="mt-3 h-2 bg-gray-100 rounded-full">
-                <div
-                  className="h-full bg-amber-400 rounded-full transition-all"
-                  style={{
-                    width: `${Math.min(100, (canSave / emergencyFund) * 100 * 6)}%`,
-                  }}
-                />
-              </div>
-              <p className="text-xs text-gray-400 mt-2">
-                {monthsToEmergency > 0
-                  ? `~${monthsToEmergency} months to build this fund`
-                  : "You can build this fund!"}
-              </p>
+            </div>
+
+            {/* Right col — AI Advisor big panel */}
+            <div className="lg:col-span-1 h-[700px]">
+              <AIAdvisorPanel onClose={() => setShowAdvisor(false)} />
             </div>
           </div>
+        ) : (
+          /* ── WITHOUT ADVISOR ── */
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Expense chart */}
+            <div className="lg:col-span-1">
+              <ExpenseChart data={userData} />
+            </div>
 
-          {/* Insights */}
-          <div className="lg:col-span-1">
-            <InsightsPanel data={userData} />
+            {/* Health score + Emergency fund */}
+            <div className="lg:col-span-1 flex flex-col gap-6">
+              <HealthScore score={score} />
+              <div className="bg-white rounded-2xl border border-gray-100 p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertCircle size={16} className="text-amber-500" />
+                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+                    Emergency Fund
+                  </h3>
+                </div>
+                <p className="text-2xl font-black text-gray-900">
+                  {fmt(emergencyFund)}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  6 months of expenses needed
+                </p>
+                <div className="mt-3 h-2 bg-gray-100 rounded-full">
+                  <div
+                    className="h-full bg-amber-400 rounded-full transition-all"
+                    style={{
+                      width: `${Math.min(100, (canSave / emergencyFund) * 100 * 6)}%`,
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-gray-400 mt-2">
+                  {monthsToEmergency > 0
+                    ? `~${monthsToEmergency} months to build this fund`
+                    : "You can build this fund!"}
+                </p>
+              </div>
+            </div>
+
+            {/* Smart Insights */}
+            <div className="lg:col-span-1">
+              <InsightsPanel data={userData} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -1,13 +1,15 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Groq from "groq-sdk";
 import { NextRequest, NextResponse } from "next/server";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY!,
+});
 
 export async function POST(req: NextRequest) {
   try {
     const { messages, userData } = await req.json();
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    console.log("Groq API Key exists:", !!process.env.GROQ_API_KEY);
 
     const totalIncome = userData.salary + userData.otherIncome;
     const totalExp = Object.values(userData.expenses).reduce(
@@ -16,7 +18,7 @@ export async function POST(req: NextRequest) {
     );
     const canSave = totalIncome - totalExp;
 
-    const systemContext = `
+    const systemPrompt = `
       You are a helpful personal financial advisor for an Indian user.
 
       Here is their complete financial profile:
@@ -39,49 +41,52 @@ export async function POST(req: NextRequest) {
 
       Rules you must follow:
       - Always give advice specific to their exact numbers
-      - Use Indian financial context (SIP, PPF, FD, NPS, ELSS, Nifty 50)
+      - Use Indian financial context (SIP, PPF, FD, NPS, Nifty 50, ELSS)
       - Keep responses clear and easy to understand
+      - Use bullet points when listing items
       - Use ₹ symbol for all amounts
-      - Format responses with bullet points when listing
       - Be encouraging and positive
-      - Keep responses under 200 words
+      - Keep responses under 150 words
       - Never recommend specific individual stocks
     `;
 
-    const history = messages
-      .slice(0, -1)
-      .map((msg: { role: string; content: string }) => ({
-        role: msg.role === "user" ? "user" : "model",
-        parts: [{ text: msg.content }],
-      }));
+    // Build message history for Groq
+    const chatMessages = [
+      {
+        role: "system" as const,
+        content: systemPrompt,
+      },
+      ...messages.map((msg: { role: string; content: string }) => ({
+        role: msg.role === "user" ? ("user" as const) : ("assistant" as const),
+        content: msg.content,
+      })),
+    ];
 
-    const chat = model.startChat({
-      history: [
-        {
-          role: "user",
-          parts: [{ text: systemContext }],
-        },
-        {
-          role: "model",
-          parts: [
-            {
-              text: `Understood. I am ${userData.name}'s personal financial advisor. I have their complete profile and will give personalized advice based on their exact numbers.`,
-            },
-          ],
-        },
-        ...history,
-      ],
+    console.log("Sending to Groq:", messages[messages.length - 1].content);
+
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: chatMessages,
+      max_tokens: 300,
+      temperature: 0.7,
     });
 
-    const lastMessage = messages[messages.length - 1].content;
-    const result = await chat.sendMessage(lastMessage);
-    const response = result.response.text();
+    const reply = completion.choices[0]?.message?.content || "";
 
-    return NextResponse.json({ reply: response });
-  } catch (error) {
-    console.error("Gemini error:", error);
+    console.log("Groq response:", reply);
+
+    if (!reply) {
+      return NextResponse.json({
+        reply: "I could not generate a response. Please try again.",
+      });
+    }
+
+    return NextResponse.json({ reply });
+  } catch (error: unknown) {
+    console.error("Groq error:", error);
+    const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to get response" },
+      { reply: `Something went wrong: ${message}` },
       { status: 500 },
     );
   }
