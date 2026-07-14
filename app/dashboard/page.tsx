@@ -16,13 +16,22 @@ import {
   AlertCircle,
   Target,
   Bot,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { userData } = useWealthStore();
+  const { userData, clearData } = useWealthStore();
   const [showAdvisor, setShowAdvisor] = useState(false);
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    clearData();
+    router.push("/sign-in");
+  };
 
   useEffect(() => {
     if (!userData) router.push("/onboarding");
@@ -76,6 +85,13 @@ export default function DashboardPage() {
                 {name.charAt(0).toUpperCase()}
               </span>
             </div>
+            <button
+              onClick={handleSignOut}
+              title="Sign Out"
+              className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center shrink-0 hover:bg-gray-50 cursor-pointer text-gray-500"
+            >
+              <LogOut size={16} />
+            </button>
           </div>
         </div>
       </div>
@@ -86,7 +102,7 @@ export default function DashboardPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl font-black text-gray-900">
-              Hello, {name} 
+              Hello, {name}
             </h1>
             <p className="text-gray-500 text-sm mt-1">
               Here is your personal financial snapshot

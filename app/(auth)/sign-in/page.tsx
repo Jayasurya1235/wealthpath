@@ -9,10 +9,41 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const handleSignIn = async () => {
+    setError("");
+
+    if (!email || !password) {
+      setError("Please enter both email and password.");
+      return;
+    }
+
+    setLoading(true);
+    const supabase = createClient();
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    setLoading(false);
+
+    if (signInError) {
+      setError(signInError.message);
+      return;
+    }
+
+    router.push("/dashboard");
+  };
 
   return (
     <div className="min-h-screen bg-[#e8f5e9] flex items-center justify-center p-4 bg-[url('/assets/bg.png')]">
@@ -42,6 +73,8 @@ export default function SignInPage() {
               id="email"
               type="email"
               placeholder="example@gmail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="mt-1 bg-[#ffffff] border-green-900"
             />
           </div>
@@ -59,6 +92,8 @@ export default function SignInPage() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="bg-[#ffffff] border-gray-200 pr-10"
               />
               <button
@@ -87,12 +122,18 @@ export default function SignInPage() {
             </Link>
           </div>
 
+          {/* Error message */}
+          {error && (
+            <p className="text-sm text-red-600 mb-3 text-center">{error}</p>
+          )}
+
           {/* Sign In Button */}
           <Button
-            onClick={() => router.push("/onboarding")}
-            className="w-full bg-[#1a4731] hover:bg-[#143a28] text-white font-bold py-5 mb-4 cursor-pointer"
+            onClick={handleSignIn}
+            disabled={loading}
+            className="w-full bg-[#1a4731] hover:bg-[#143a28] text-white font-bold py-5 mb-4 cursor-pointer disabled:opacity-60"
           >
-            Sign In
+            {loading ? "Signing in..." : "Sign In"}
           </Button>
 
           {/* Social Login */}

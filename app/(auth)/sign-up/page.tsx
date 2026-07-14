@@ -8,10 +8,46 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const handleSignUp = async () => {
+    setError("");
+
+    if (!name || !email || !password) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    setLoading(true);
+    const supabase = createClient();
+
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: name },
+        emailRedirectTo: `${window.location.origin}/auth/confirm`,
+      },
+    });
+
+    setLoading(false);
+
+    if (signUpError) {
+      setError(signUpError.message);
+      return;
+    }
+
+    router.push("/onboarding");
+  };
 
   return (
     <div className="min-h-screen bg-[#e8f5e9] flex items-center justify-center p-4 bg-[url('/assets/bg.png')]">
@@ -43,6 +79,8 @@ export default function SignUpPage() {
               id="name"
               type="text"
               placeholder="Your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="mt-1  bg-[#ffffff]  border-green-900"
             />
           </div>
@@ -59,6 +97,8 @@ export default function SignUpPage() {
               id="email"
               type="email"
               placeholder="example@gmail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="mt-1 bg-[#ffffff] border-green-900"
             />
           </div>
@@ -76,6 +116,8 @@ export default function SignUpPage() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="bg-[#ffffff] border-green-900 pr-10"
               />
               <button
@@ -88,12 +130,18 @@ export default function SignUpPage() {
             </div>
           </div>
 
+          {/* Error message */}
+          {error && (
+            <p className="text-sm text-red-600 mb-3 text-center">{error}</p>
+          )}
+
           {/* Sign Up Button */}
           <Button
-            onClick={() => router.push("/onboarding")}
-            className="w-full bg-[#1a4731] hover:bg-[#143a28] text-white font-bold py-5 mb-4 cursor-pointer"
+            onClick={handleSignUp}
+            disabled={loading}
+            className="w-full bg-[#1a4731] hover:bg-[#143a28] text-white font-bold py-5 mb-4 cursor-pointer disabled:opacity-60"
           >
-            Create Account
+            {loading ? "Creating account..." : "Create Account"}
           </Button>
 
           {/* Social Login */}
